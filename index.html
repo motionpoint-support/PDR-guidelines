@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>When a Case Becomes a PDR</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&amp;family=Lexend:wght@400;500;600;700&amp;family=Lato:wght@400;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Lato',system-ui,sans-serif;background:#0E1B2E;color:#0B2545}
+a{color:#1466F0}a:hover{color:#0B4FC0}
+.stage *{box-sizing:border-box}
+.mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace}
+.disp{font-family:'Lexend','Lato',sans-serif}
+.paused,.paused *{animation-play-state:paused !important}
+.sh{position:absolute;left:40px;top:-4px}
+.h2{font-family:'Lexend','Lato',sans-serif;font-size:30px;font-weight:700;color:#0B2545}
+.h2s{font-size:18px;color:#3B4F6B}
+.sc{position:absolute;top:66px;height:86px;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.sr{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.sn{font-family:'Lexend','Lato',sans-serif;width:30px;height:30px;border-radius:15px;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.st{font-size:16px;font-weight:900;color:#0B2545;line-height:1.2}
+.tg{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:11px;color:#FFFFFF;font-size:11px;font-weight:900;letter-spacing:.03em;white-space:nowrap}
+.mk{position:absolute;right:-9px;bottom:-11px}
+.panel{position:absolute;left:40px;top:170px;width:1200px;height:460px;border-radius:22px;background:#FFFFFF;box-shadow:0 14px 36px rgba(11,37,69,.10);overflow:hidden}
+.win{position:absolute;left:0;top:0;width:1200px;height:460px;background:#FFFFFF}
+.ill{position:absolute;left:26px;top:26px;width:470px;height:408px;border-radius:18px;overflow:hidden}
+.tc{position:absolute;left:530px;top:30px;width:640px;display:flex;flex-direction:column;gap:12px}
+.eb{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.tt{font-family:'Lexend','Lato',sans-serif;font-size:28px;font-weight:700;color:#0B2545;line-height:1.2;margin-bottom:2px}
+.bl{display:flex;gap:12px;align-items:flex-start}
+.bn{width:26px;height:26px;border-radius:13px;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.bt{font-size:19px;line-height:1.4;color:#0B2545;font-weight:700}
+.lp{align-self:flex-start;margin-top:10px;height:46px;padding:0 20px 0 10px;border-radius:23px;display:inline-flex;align-items:center;gap:10px;font-size:17px;font-weight:900}
+.ex{margin-top:6px;border-radius:14px;background:#FFF7F0;border:2px dashed #C2410C;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.exh{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#9A3412}
+.ext{font-size:17px;line-height:1.45;font-weight:700;color:#0B2545}
+.wc{position:absolute;background:#FFFFFF;border-radius:14px;box-shadow:0 10px 24px rgba(11,37,69,.14);overflow:hidden}
+.bar{height:30px;background:#E9EEF5;display:flex;align-items:center;gap:5px;padding:0 10px}
+.dot{width:8px;height:8px;border-radius:4px}
+.url{margin-left:6px;flex-grow:1;height:18px;border-radius:9px;background:#FFFFFF;font-size:11px;color:#3B4F6B;padding:0 8px;line-height:18px;white-space:nowrap;overflow:hidden}
+.ln{height:8px;border-radius:4px;background:#E3E9F2}
+.lab{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:#5A6B84}
+.fld{height:32px;border-radius:8px;border:2px solid #C9D3E1;display:flex;align-items:center;padding:0 10px;font-size:13px;color:#0B2545}
+.av{position:absolute}
+@keyframes panX{0%,15%{transform:translateX(0)}85%,100%{transform:translateX(-1264px)}}
+.shot{position:absolute;left:26px;top:26px;width:700px;height:408px;border-radius:14px;background:#EEF2F8;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tc2{position:absolute;left:752px;top:30px;width:424px;display:flex;flex-direction:column;gap:12px}
+.call{margin-top:6px;border-radius:14px;background:#1466F0;color:#FFFFFF;padding:14px 18px;display:flex;flex-direction:column;gap:4px}
+.rz{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:16px;background:#FFF7F0;border:2px solid #C2410C;color:#7C2D12;font-size:14px;font-weight:900;white-space:nowrap}
+.ch{height:40px;padding:0 16px;border-radius:20px;background:#FFFFFF;display:inline-flex;align-items:center;font-size:15px;font-weight:900}
+.row{height:44px;border-radius:12px;background:#FFFFFF;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:16px;font-weight:700;color:#0B2545;box-shadow:0 4px 10px rgba(11,37,69,.06)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes fromL{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes fromR{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes win{0%{opacity:0;transform:translateY(14px)}9%{opacity:1;transform:none}90%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-10px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(20,102,240,.45),0 18px 40px rgba(11,37,69,.14)}50%{box-shadow:0 0 0 16px rgba(20,102,240,0),0 18px 40px rgba(11,37,69,.14)}}
+@keyframes warnPulse{0%,100%{box-shadow:0 0 0 0 rgba(234,88,12,.55)}50%{box-shadow:0 0 0 12px rgba(234,88,12,0)}}
+@keyframes press{0%,100%{transform:scale(1)}50%{transform:scale(.94)}}
+@keyframes typeIn{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes stamp{0%{opacity:0;transform:scale(1.7) rotate(-7deg)}60%{opacity:1;transform:scale(.95) rotate(-7deg)}100%{opacity:1;transform:scale(1) rotate(-7deg)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes march{to{stroke-dashoffset:-72}}
+@keyframes arc{from{stroke-dashoffset:302}to{stroke-dashoffset:0}}
+@keyframes pass{from{transform:translateX(0)}to{transform:translateX(196px)}}
+@keyframes toL{from{opacity:1;transform:none}to{opacity:0;transform:translate(-320px,250px) scale(.35)}}
+@keyframes toR{from{opacity:1;transform:none}to{opacity:0;transform:translate(320px,250px) scale(.35)}}
+@keyframes hiO{0%{background:#FFFFFF}100%{background:#FFF1E6;box-shadow:0 0 0 3px #C2410C}}
+@keyframes toGrey{to{background:#94A3B8}}
+@keyframes litRing{0%{box-shadow:0 0 0 0 currentColor;transform:none}8%,92%{box-shadow:0 0 0 4px currentColor,0 16px 30px rgba(11,37,69,.18);transform:translateY(-6px)}100%{box-shadow:0 0 0 0 transparent;transform:none}}
+.ctl{height:44px;min-width:44px;padding:0 14px;border-radius:10px;border:1px solid #2A3E5C;background:#15263F;color:#E6EEF8;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap}
+.ctl:hover{background:#1D3354}
+.ctl.main{background:#1466F0;border-color:#1466F0;color:#fff}
+.ctl.main:hover{background:#0B55D0}
+.chip{height:32px;padding:0 7px;letter-spacing:-.01em;border-radius:16px;border:1px solid #2A3E5C;background:transparent;color:#A9B8CC;font-family:'Lato',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.chip:hover{color:#fff;border-color:#4A6488}
+.chip.done{color:#D5E0EE;border-color:#34507A;background:#16304F}
+.chip.on{color:#0B2545;background:#8FD16F;border-color:#8FD16F}
+</style>
+<style>
+html,body{height:100%}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden}
+#fit{width:1280px;height:870px;transform-origin:center center;flex-shrink:0}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div id="fit">
+<div style="width: 1280px; height: 870px; background: #0E1B2E; display: flex; flex-direction: column; overflow: hidden;">
+
+<!-- hidden symbol library -->
+<svg width="0" height="0" style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+<defs>
+<symbol id="dc-customer" viewBox="0 0 200 200">
+<path d="M58 88 C52 38 148 38 142 88 L146 124 C132 132 124 116 122 104 L78 104 C76 116 68 132 54 124 Z" fill="#3B2A26"></path>
+<path d="M40 200 C40 150 66 128 100 128 C134 128 160 150 160 200 Z" fill="#23A094"></path>
+<path d="M84 129 L100 152 L116 129 Z" fill="#E6F6F3"></path>
+<rect x="89" y="104" width="22" height="28" rx="8" fill="#E2A77F"></rect>
+<ellipse cx="100" cy="82" rx="32" ry="36" fill="#F1C39E"></ellipse>
+<path d="M66 76 C68 42 132 40 136 78 C118 64 94 60 70 80 Z" fill="#3B2A26"></path>
+<circle cx="88" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="112" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="79" cy="98" r="5.5" fill="#F29A86" opacity=".45"></circle>
+<circle cx="121" cy="98" r="5.5" fill="#F29A86" opacity=".45"></circle>
+<path d="M90 102 Q100 109 110 102" stroke="#A0523D" stroke-width="3" fill="none" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-agent" viewBox="0 0 200 200">
+<path d="M40 200 C40 150 66 128 100 128 C134 128 160 150 160 200 Z" fill="#1466F0"></path>
+<path d="M84 129 L100 150 L116 129 Z" fill="#FFFFFF"></path>
+<rect x="89" y="104" width="22" height="28" rx="8" fill="#B97A55"></rect>
+<ellipse cx="68" cy="88" rx="7" ry="10" fill="#C98B63"></ellipse>
+<ellipse cx="132" cy="88" rx="7" ry="10" fill="#C98B63"></ellipse>
+<ellipse cx="100" cy="82" rx="32" ry="36" fill="#D39A72"></ellipse>
+<path d="M67 80 C62 42 138 40 133 80 C126 60 80 58 67 80 Z" fill="#1F1A17"></path>
+<circle cx="88" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="112" cy="87" r="3.8" fill="#1F2937"></circle>
+<path d="M89 101 Q100 109 111 101" stroke="#7A3B2A" stroke-width="3" fill="none" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-server" viewBox="0 0 120 150">
+<rect x="10" y="6" width="100" height="40" rx="8" fill="#243B5E"></rect>
+<rect x="10" y="54" width="100" height="40" rx="8" fill="#2E4A73"></rect>
+<rect x="10" y="102" width="100" height="40" rx="8" fill="#243B5E"></rect>
+<circle cx="28" cy="26" r="5" fill="#8FD16F"></circle><circle cx="28" cy="74" r="5" fill="#8FD16F"></circle><circle cx="28" cy="122" r="5" fill="#8FD16F"></circle>
+<rect x="46" y="22" width="50" height="8" rx="4" fill="#5B7BA6"></rect><rect x="46" y="70" width="50" height="8" rx="4" fill="#5B7BA6"></rect><rect x="46" y="118" width="50" height="8" rx="4" fill="#5B7BA6"></rect>
+</symbol>
+<symbol id="dc-check" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="11" fill="#3E9B2F"></circle>
+<path d="M6.5 12.5 L10.3 16.2 L17.5 8.6" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-x" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="11" fill="#C2410C"></circle>
+<path d="M8 8l8 8M16 8l-8 8" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-warn" viewBox="0 0 24 24">
+<path d="M12 3 L22 20.5 H2 Z" fill="#F2A93B" stroke="#8A5200" stroke-width="1.4" stroke-linejoin="round"></path>
+<path d="M12 9.5 V14.5" stroke="#5A3500" stroke-width="2.2" stroke-linecap="round"></path>
+<circle cx="12" cy="17.4" r="1.3" fill="#5A3500"></circle>
+</symbol>
+<symbol id="dc-ticket" viewBox="0 0 24 24">
+<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4z" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+<path d="M9 5v14" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2 2.4"></path>
+</symbol>
+<symbol id="dc-clock" viewBox="0 0 24 24">
+<circle cx="12" cy="13" r="8.5" fill="none" stroke="currentColor" stroke-width="1.9"></circle>
+<path d="M12 8.5V13l3 2M10 2.5h4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-phone" viewBox="0 0 24 24">
+<path d="M5 3.5h3.5l2 5-2.5 1.6a11 11 0 0 0 5.4 5.4l1.6-2.5 5 2v3.5a2 2 0 0 1-2 2A17 17 0 0 1 3 5.5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-cal" viewBox="0 0 24 24">
+<rect x="3" y="5" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M16 3v4M8 3v4M3 10h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-mail" viewBox="0 0 24 24">
+<rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M3.5 7l8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-lock" viewBox="0 0 24 24">
+<rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.9"></path>
+<circle cx="12" cy="15.6" r="1.6" fill="currentColor"></circle>
+</symbol>
+<symbol id="dc-doc" viewBox="0 0 40 48">
+<path d="M4 4h22l10 10v30H4z" fill="#FFFFFF" stroke="#6D4AE0" stroke-width="2.4" stroke-linejoin="round"></path>
+<path d="M26 4v10h10" fill="none" stroke="#6D4AE0" stroke-width="2.4" stroke-linejoin="round"></path>
+<path d="M11 24h18M11 31h18M11 38h12" stroke="#B9A8F2" stroke-width="3" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-img" viewBox="0 0 24 24">
+<rect x="3" y="4" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<circle cx="9" cy="9.5" r="1.8" fill="currentColor"></circle>
+<path d="M3.5 17l5-5 4 4 3-3 5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-play" viewBox="0 0 24 24">
+<path d="M7 4.5v15l12-7.5z" fill="currentColor"></path>
+</symbol>
+<symbol id="dc-edit" viewBox="0 0 24 24">
+<path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+<path d="M13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.9"></path>
+</symbol>
+</defs>
+</svg>
+
+<!-- ===================== STAGE ===================== -->
+<div id="stage" class="stage" style="position: relative; width: 1280px; height: 720px; overflow: hidden; background: #F3F6FB; flex-shrink: 0;">
+
+<div style="position: absolute; left: -160px; top: -200px; width: 560px; height: 560px; border-radius: 50%; background: #E6EEFA;"></div>
+<div style="position: absolute; right: -120px; bottom: -220px; width: 520px; height: 520px; border-radius: 50%; background: #EAF5E4;"></div>
+
+<div style="position: absolute; left: 28px; top: 14px; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; color: #3B4F6B; letter-spacing: .02em;">
+<span id="steps" style="display: contents;"></span>
+<span class="disp" style="font-weight: 700; color: #0B2545; font-size: 16px;">MotionPoint Support</span>
+<span style="width: 4px; height: 4px; border-radius: 2px; background: #94A3B8;"></span>
+<span>New Agent Training &middot; Post Delivery Requests</span>
+</div>
+
+<!-- ============ SCENE 0 · INTRO ============ -->
+<template id="scene-0">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div style="position: absolute; left: 0; top: 24px; width: 1280px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;"><div style="font-size: 16px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #3E8A2A; animation: up .8s .4s both;">Customer Support &middot; New Agent Training</div><h1 class="disp" style="margin: 0; font-size: 60px; line-height: 1.05; font-weight: 700; color: #0B2545; animation: up .9s .9s both;">When a case becomes a PDR</h1><p style="margin: 0; font-size: 23px; color: #3B4F6B; max-width: 960px; animation: up .9s 1.6s both;">A PDR (post delivery request) is a mini project managed by a PM.</p></div>
+<div style="position: absolute; left: 40px; top: 250px; width: 270px; height: 150px; border-radius: 20px; background: #DCE7F7; border: 3px solid #1466F0; padding: 18px; display: flex; flex-direction: column; gap: 8px; animation: pop .55s 6s both;"><span class="sn" style="background: #1466F0;">1</span><span class="disp" style="font-size: 23px; font-weight: 700; color: #0B2545;">Spot it</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Functional change + one more sign</span></div>
+<svg width="36" height="24" style="position: absolute; left: 314px; top: 313px; animation: fadeIn .4s 6.8s both;"><path d="M2 12 H32 M24 4 L33 12 L24 20" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<div style="position: absolute; left: 350px; top: 250px; width: 270px; height: 150px; border-radius: 20px; background: #E3E9F2; border: 3px solid #0B2545; padding: 18px; display: flex; flex-direction: column; gap: 8px; animation: pop .55s 8s both;"><span class="sn" style="background: #0B2545;">2</span><span class="disp" style="font-size: 23px; font-weight: 700; color: #0B2545;">Flag it</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Document the reasons, Teams the CXM</span></div>
+<svg width="36" height="24" style="position: absolute; left: 624px; top: 313px; animation: fadeIn .4s 8.8s both;"><path d="M2 12 H32 M24 4 L33 12 L24 20" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<div style="position: absolute; left: 660px; top: 250px; width: 270px; height: 150px; border-radius: 20px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 18px; display: flex; flex-direction: column; gap: 8px; animation: pop .55s 10s both;"><span class="sn" style="background: #0F7C7A;">3</span><span class="disp" style="font-size: 23px; font-weight: 700; color: #0B2545;">Route it</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">CXM or PM approves</span></div>
+<svg width="36" height="24" style="position: absolute; left: 934px; top: 313px; animation: fadeIn .4s 10.8s both;"><path d="M2 12 H32 M24 4 L33 12 L24 20" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<div style="position: absolute; left: 970px; top: 250px; width: 270px; height: 150px; border-radius: 20px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 18px; display: flex; flex-direction: column; gap: 8px; animation: pop .55s 12s both;"><span class="sn" style="background: #2F7A22;">4</span><span class="disp" style="font-size: 23px; font-weight: 700; color: #0B2545;">Step out</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">The PM owns the PDR</span></div>
+<div style="position: absolute; left: 200px; top: 450px; width: 880px; height: 100px; border-radius: 18px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 16px; padding: 0 28px; animation: up .7s 16s both;"><svg width="36" height="36" style="flex-shrink: 0; color: #8FD16F;"><use href="#dc-check"></use></svg><span style="font-size: 20px; font-weight: 900; line-height: 1.4;">Once a case is a PDR, the PM handles it directly. You&rsquo;re no longer involved.</span></div>
+</div>
+</template>
+
+<!-- ============ SCENE 1 · SPOT IT ============ -->
+<template id="scene-1">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 1: Spot it</div><div class="h2s">The two-part test.</div></div>
+<div class="wc" style="left: 40px; top: 70px; width: 440px; height: 440px; padding: 26px 28px; display: flex; flex-direction: column; gap: 14px; border: 3px solid #1466F0; animation: fromL .7s 2s both;"><span class="eb" style="color: #1466F0;">1 &middot; Must be true</span><span class="disp" style="font-size: 27px; font-weight: 700; color: #0B2545; line-height: 1.3;">A <span style="background: #FFF59D; padding: 0 4px; border-radius: 4px;">functional change</span> is being made to a site that is <b>live</b>, or soon to be live</span><div class="row" style="margin-top: auto; height: auto; min-height: 50px; padding: 10px 14px; font-size: 16px; background: #EAF2FF; box-shadow: none; animation: pop .5s 9s both;"><svg width="24" height="24" style="flex-shrink: 0;"><use href="#dc-check"></use></svg>Not true? It&rsquo;s not a PDR.</div></div>
+<div style="position: absolute; left: 494px; top: 250px; width: 72px; height: 72px; border-radius: 36px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Lexend', sans-serif; font-size: 20px; font-weight: 700; animation: stamp .6s 12s both;">AND</div>
+<div class="wc" style="left: 580px; top: 70px; width: 660px; height: 440px; padding: 18px 22px; display: flex; flex-direction: column; gap: 9px; border: 3px solid #0F7C7A; animation: fromR .7s 13s both;"><span class="eb" style="color: #0F7C7A;">2 &middot; Plus at least one of these</span><div class="row" style="height: auto; min-height: 54px; padding: 8px 14px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 15s both, litRing 5s 15s both; color: #0F7C7A;"><span style="width: 34px; height: 34px; border-radius: 17px; background: #DDF3F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="19" height="19" style="color: #0F7C7A;"><use href="#dc-mail"></use></svg></span><span style="color: #0B2545;">The customer requests a <b>separate invoice</b> for the work</span></div><div class="row" style="height: auto; min-height: 54px; padding: 8px 14px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 20s both, litRing 5s 20s both; color: #0F7C7A;"><span style="width: 34px; height: 34px; border-radius: 17px; background: #DDF3F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="19" height="19" style="color: #0F7C7A;"><use href="#dc-check"></use></svg></span><span style="color: #0B2545;">The change <b>needs QA</b>: site analysis, regression test, light QA or a TCrawl run</span></div><div class="row" style="height: auto; min-height: 54px; padding: 8px 14px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 25s both, litRing 5s 25s both; color: #0F7C7A;"><span style="width: 34px; height: 34px; border-radius: 17px; background: #DDF3F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="19" height="19" style="color: #0F7C7A;"><use href="#dc-doc"></use></svg></span><span style="color: #0B2545;">The <b>translation volume</b> is significant</span></div><div class="row" style="height: auto; min-height: 54px; padding: 8px 14px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 30s both, litRing 5s 30s both; color: #0F7C7A;"><span style="width: 34px; height: 34px; border-radius: 17px; background: #DDF3F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="19" height="19" style="color: #0F7C7A;"><use href="#dc-cal"></use></svg></span><span style="color: #0B2545;">The change is big enough to consider <b>adjusting the monthly subscription</b></span></div><div class="row" style="height: auto; min-height: 54px; padding: 8px 14px; font-size: 15px; font-weight: 700; line-height: 1.35; animation: up .5s 35s both, litRing 12s 35s both; color: #0F7C7A;"><span style="width: 34px; height: 34px; border-radius: 17px; background: #DDF3F1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="19" height="19" style="color: #0F7C7A;"><use href="#dc-edit"></use></svg></span><span style="color: #0B2545;">The work is <b>complex</b>: multiple flows, steps or languages, or long reports with attachments. MotionPoint QA can run regression tests, then validate the TAM and PE fixes so the PM can give the customer progressive updates.</span></div></div>
+<div style="position: absolute; left: 40px; top: 528px; width: 1200px; height: 74px; border-radius: 20px; background: #2F7A22; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 48s both;"><svg width="38" height="38" style="flex-shrink: 0; color: #FFFFFF;"><use href="#dc-check"></use></svg><span style="font-size: 22px; font-weight: 900;">Part 1 + at least one from the list? It may be a PDR.</span></div>
+<div style="position: absolute; left: 40px; top: 66px; width: 1200px; height: 566px; border-radius: 22px; background: #FFFFFF; box-shadow: 0 20px 50px rgba(11,37,69,.22); padding: 28px 36px; display: flex; flex-direction: column; gap: 18px; animation: pop .6s 55s both;"><span class="disp" style="font-size: 32px; font-weight: 700; color: #0B2545; animation: up .5s 55.6s both;">A PDR is heavy work, not a quick fix</span><div style="display: flex; gap: 24px; flex-grow: 1;"><div style="width: 420px; border-radius: 18px; background: #FCE3CC; border: 3px solid #C2410C; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; animation: fromL .6s 57s both;"><div style="display: flex; align-items: center; gap: 10px;"><svg width="28" height="28"><use href="#dc-x"></use></svg><span class="eb" style="color: #9A3412;">Not a PDR</span></div><div class="row" style="height: 52px; font-size: 18px; animation: up .45s 58s both;"><svg width="22" height="22"><use href="#dc-x"></use></svg>&ldquo;Fix this URL&rdquo;</div><div class="row" style="height: 52px; font-size: 18px; animation: up .45s 59.2s both;"><svg width="22" height="22"><use href="#dc-x"></use></svg>&ldquo;Translate this page&rdquo;</div><div class="row" style="height: 52px; font-size: 18px; animation: up .45s 60.4s both;"><svg width="22" height="22"><use href="#dc-x"></use></svg>&ldquo;Fix a misalignment&rdquo;</div><span style="margin-top: auto; font-size: 17px; font-weight: 700; color: #9A3412; line-height: 1.4; animation: fadeIn .5s 62s both;">Simple, single requests stay regular cases. Work them as usual.</span></div><div style="flex-grow: 1; border-radius: 18px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; animation: fromR .6s 65s both;"><div style="display: flex; align-items: center; gap: 10px;"><svg width="28" height="28"><use href="#dc-check"></use></svg><span class="eb" style="color: #1F5A16;">A PDR</span></div><span style="font-size: 18px; font-weight: 900; color: #0B2545;">Many requests in one case</span><div style="display: flex; flex-wrap: wrap; gap: 8px;"><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #2F7A22; animation: pop .45s 66.5s both;">Translation</span><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #2F7A22; animation: pop .45s 67.2s both;">Functionality</span><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #2F7A22; animation: pop .45s 67.9s both;">Activations</span><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #2F7A22; animation: pop .45s 68.6s both;">Misalignments</span><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #2F7A22; animation: pop .45s 69.3s both;">Customizations</span></div><span style="font-size: 18px; font-weight: 900; color: #0B2545; margin-top: 6px; animation: fadeIn .4s 70.5s both;">Across multiple languages</span><div style="display: flex; flex-wrap: wrap; gap: 8px;"><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #1466F0; animation: pop .45s 71s both;">ES</span><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #1466F0; animation: pop .45s 71.5s both;">FR</span><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #1466F0; animation: pop .45s 72s both;">DE</span><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #1466F0; animation: pop .45s 72.5s both;">JA</span><span class="ch" style="height: 42px; font-size: 16px; color: #0B2545; border: 2px solid #1466F0; animation: pop .45s 73s both;">&hellip;</span></div><span style="margin-top: auto; font-size: 17px; font-weight: 700; color: #1F5A16; line-height: 1.4; animation: fadeIn .5s 74s both;">Plus multiple flows and steps, long reports with attachments, and QA regression testing.</span></div></div></div>
+</div>
+</template>
+
+<!-- ============ SCENE 2 · FLAG IT ============ -->
+<template id="scene-2">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 2: Flag it</div><div class="h2s">Document the reasons, then confirm with the CXM.</div></div>
+<div class="sc" style="left: 40px; width: 389.33px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.4s both, litRing 20s 4s both;"><div class="sr"><span class="sn" style="background: #1466F0;">1</span><span class="tg" style="background: #1466F0;">Flag</span></div><div class="st">Who flags, who approves</div><svg class="mk" width="28" height="28" style="animation: pop .5s 23.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 445.33px; width: 389.33px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.6s both, litRing 20s 24s both;"><div class="sr"><span class="sn" style="background: #1466F0;">2</span><span class="tg" style="background: #1466F0;">SF case</span></div><div class="st">Document the reasons</div><svg class="mk" width="28" height="28" style="animation: pop .5s 43.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 850.67px; width: 389.33px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.8s both, litRing 20s 44s both;"><div class="sr"><span class="sn" style="background: #1466F0;">3</span><span class="tg" style="background: #1466F0;">Teams</span></div><div class="st">Teams the CXM</div><svg class="mk" width="28" height="28" style="animation: pop .5s 63.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Three steps.</div>
+<div class="win" style="animation: win 20s 4s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div style="position: absolute; left: 60px; top: 100px; width: 270px; height: 200px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 4.8s both;"><span class="sn" style="background: #1466F0;">1</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Anyone on the team</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Spots the signs and <b>flags</b> the case.</span></div><svg width="40" height="24" style="position: absolute; left: 336px; top: 188px; animation: fadeIn .4s 6s both;"><path d="M2 12 H36 M28 4 L37 12 L28 20" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="position: absolute; left: 380px; top: 100px; width: 270px; height: 200px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 6.6s both;"><span class="sn" style="background: #2F7A22;">2</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">A PM or CXM</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Is the <b>only</b> one who can <b>approve</b> it as a PDR.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Flag &middot; 1 of 3</div>
+<div class="tt" style="font-size: 26px;">Anyone can flag. Only a PM or CXM approves.</div>
+<div class="bl" style="animation: fromR .6s 8s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">You spot the signs, so you can flag it.</span></div>
+<div class="bl" style="animation: fromR .6s 11s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">2</span><span class="bt" style="font-size: 18px;">The PM or CXM decides if it becomes a PDR.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 14s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Remember</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Flagging isn&rsquo;t approving. Wait for the PM or CXM.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 20s 24s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div class="wc" style="left: 40px; top: 30px; width: 620px; height: 346px; animation: zoomIn .6s 24.4s both;"><div style="display: flex; border-bottom: 1px solid #E3E9F2;"><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #5A6B84;">Email</span><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #1466F0; border-bottom: 3px solid #1466F0;">Post</span><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #5A6B84;">Track &amp; Reassign</span></div><div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 6px;"><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 25s both;"><b>@CXM</b> Possible PDR. Reasons below.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 26.1s both;"><b>What&rsquo;s changing:</b> a new account dashboard on the live site (ES, FR).</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 27.2s both;"><b>Requests in this case:</b> translation, functionality and misalignments.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 28.3s both;"><b>Why a PDR:</b> multiple flows and steps, long reports with attachments. Needs QA regression testing.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 29.4s both;"><b>Customer asks:</b> a separate invoice for the work.</div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Flag &middot; 2 of 3</div>
+<div class="tt" style="font-size: 26px;">Document the reasons in the case</div>
+<div class="bl" style="animation: fromR .6s 26s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">Add an internal post and tag the CXM.</span></div>
+<div class="bl" style="animation: fromR .6s 29s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">2</span><span class="bt" style="font-size: 18px;">Say what&rsquo;s changing and list each request.</span></div>
+<div class="bl" style="animation: fromR .6s 32s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">3</span><span class="bt" style="font-size: 18px;">Explain why it&rsquo;s a PDR: the legit reasons.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 20s 44s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div class="wc" style="left: 30px; top: 18px; width: 640px; height: 372px; animation: zoomIn .6s 44.4s both;"><div style="height: 42px; background: #464EB8; color: #FFFFFF; display: flex; align-items: center; gap: 10px; padding: 0 16px; font-size: 14px; font-weight: 900;"><span style="width: 26px; height: 26px; border-radius: 13px; background: #FFFFFF; color: #464EB8; display: flex; align-items: center; justify-content: center; font-size: 12px;">CX</span>Teams chat &middot; [CXM name]</div><div style="margin: 14px 16px; padding: 12px 16px; border-radius: 12px; background: #EEF0FB; display: flex; flex-direction: column; gap: 4px;"><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 45.2s both;">Hi [CXM name],</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 46.3s both;">I&rsquo;ve flagged case <b>[Case #]</b> for <b>[Customer]</b> as a possible PDR and documented the reasons in an internal post:</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 47.4s both;">&bull; Functional change on the live site (new account dashboard)</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 48.5s both;">&bull; Several requests in one case: translation, functionality and misalignments, in ES and FR</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 49.6s both;">&bull; Multiple flows and long reports with attachments; needs QA regression testing</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 50.7s both;">Could you review and confirm if it should be managed as a PDR? Thanks!</div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Flag &middot; 3 of 3</div>
+<div class="tt" style="font-size: 26px;">Reach out to the CXM on Teams first</div>
+<div class="bl" style="animation: fromR .6s 46s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">Send the CXM a short Teams message.</span></div>
+<div class="bl" style="animation: fromR .6s 49s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">2</span><span class="bt" style="font-size: 18px;">Explain the reasons, in your own words.</span></div>
+<div class="bl" style="animation: fromR .6s 53s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">3</span><span class="bt" style="font-size: 18px;">Get the CXM&rsquo;s confirmation.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 56s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Remember</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">No confirmation yet? It&rsquo;s still a regular case.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 3 · ROUTE IT ============ -->
+<template id="scene-3">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 3: Route it</div><div class="h2s">Who it goes to.</div></div>
+<div class="sc" style="left: 40px; width: 389.33px; background: #DDF3F1; color: #0F7C7A; animation: up .6s 1.4s both, litRing 18s 4s both;"><div class="sr"><span class="sn" style="background: #0F7C7A;">1</span><span class="tg" style="background: #0F7C7A;">CXM</span></div><div class="st">Subscription-size change</div><svg class="mk" width="28" height="28" style="animation: pop .5s 21.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 445.33px; width: 389.33px; background: #DDF3F1; color: #0F7C7A; animation: up .6s 1.6s both, litRing 18s 22s both;"><div class="sr"><span class="sn" style="background: #0F7C7A;">2</span><span class="tg" style="background: #0F7C7A;">PM lead</span></div><div class="st">No PM on the account</div><svg class="mk" width="28" height="28" style="animation: pop .5s 39.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 850.67px; width: 389.33px; background: #FCE3CC; color: #C2410C; animation: up .6s 1.8s both, litRing 18s 40s both;"><div class="sr"><span class="sn" style="background: #C2410C;">3</span><span class="tg" style="background: #C2410C;">Always CXM</span></div><div class="st">New section or environment</div><svg class="mk" width="28" height="28" style="animation: pop .5s 57.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Three routing rules.</div>
+<div class="win" style="animation: win 18s 4s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div style="position: absolute; left: 150px; top: 18px; width: 400px; height: 92px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 4.8s both;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Big enough to adjust the monthly subscription?</span></div><svg width="24" height="40" style="position: absolute; left: 338px; top: 114px; animation: fadeIn .4s 6s both;"><path d="M12 2 V36 M4 28 L12 37 L20 28" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="position: absolute; left: 150px; top: 158px; width: 400px; height: 100px; border-radius: 16px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 7s both;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">CXM evaluates</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">The level of effort, and the last time the customer&rsquo;s MRR was adjusted.</span></div><svg width="24" height="40" style="position: absolute; left: 338px; top: 262px; animation: fadeIn .4s 9s both;"><path d="M12 2 V36 M4 28 L12 37 L20 28" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="position: absolute; left: 150px; top: 306px; width: 400px; height: 84px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 10s both;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">It&rsquo;s a PDR? The PM manages it.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #0F7C7A;">Route &middot; 1 of 3</div>
+<div class="tt" style="font-size: 26px;">Subscription-size change? Send it to the CXM</div>
+<div class="bl" style="animation: fromR .6s 6s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">1</span><span class="bt" style="font-size: 18px;">Tag the CXM in your post.</span></div>
+<div class="bl" style="animation: fromR .6s 8s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">2</span><span class="bt" style="font-size: 18px;">The CXM checks the effort and the last MRR change.</span></div>
+<div class="bl" style="animation: fromR .6s 11s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">3</span><span class="bt" style="font-size: 18px;">If it becomes a PDR, the PM manages it.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 18s 22s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div style="position: absolute; left: 30px; top: 120px; width: 190px; height: 150px; border-radius: 16px; background: #FFF1F0; border: 3px solid #B42318; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 22.8s both;"><svg width="34" height="34"><use href="#dc-x"></use></svg><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">No PM</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">No dedicated PM, or the PM left MotionPoint</span></div><svg width="40" height="24" style="position: absolute; left: 226px; top: 183px; animation: fadeIn .4s 24.4s both;"><path d="M2 12 H36 M28 4 L37 12 L28 20" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="position: absolute; left: 270px; top: 120px; width: 190px; height: 150px; border-radius: 16px; background: #E3E9F2; border: 3px solid #0B2545; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 25s both;"><svg width="34" height="34" style="color: #0B2545;"><use href="#dc-edit"></use></svg><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">PM team lead</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Assign the case here</span></div><svg width="40" height="24" style="position: absolute; left: 466px; top: 183px; animation: fadeIn .4s 26.6s both;"><path d="M2 12 H36 M28 4 L37 12 L28 20" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="position: absolute; left: 510px; top: 120px; width: 160px; height: 150px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 27.2s both;"><svg width="34" height="34"><use href="#dc-check"></use></svg><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">New PM</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Assigned to the PDR</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #0F7C7A;">Route &middot; 2 of 3</div>
+<div class="tt" style="font-size: 26px;">No PM on the account?</div>
+<div class="bl" style="animation: fromR .6s 24s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">1</span><span class="bt" style="font-size: 18px;">No dedicated PM, or the PM is no longer with MP.</span></div>
+<div class="bl" style="animation: fromR .6s 26.5s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">2</span><span class="bt" style="font-size: 18px;">Assign the case to the PM team lead.</span></div>
+<div class="bl" style="animation: fromR .6s 29s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">3</span><span class="bt" style="font-size: 18px;">They assign a PM to the PDR.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 18s 40s both;">
+<div class="shot" style="background: #FCE3CC; display: block;"><div class="wc" style="left: 60px; top: 40px; width: 580px; height: 320px; padding: 20px; animation: zoomIn .6s 40.6s both;"><span class="lab">Customer&rsquo;s scope</span><div style="display: flex; gap: 12px; margin-top: 14px;"><div style="flex: 1; height: 90px; border-radius: 12px; background: #E3E9F2; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #3B4F6B;">/home</div><div style="flex: 1; height: 90px; border-radius: 12px; background: #E3E9F2; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #3B4F6B;">/shop</div><div style="flex: 1; height: 90px; border-radius: 12px; background: #E3E9F2; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #3B4F6B;">/help</div></div><div style="display: flex; gap: 12px; margin-top: 14px;"><div style="flex: 1; height: 100px; border-radius: 12px; border: 3px dashed #C2410C; background: #FFF7F0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 15px; font-weight: 900; color: #9A3412; animation: pop .5s 42.4s both;"><span style="font-size: 26px;">+</span>New section of the site</div><div style="flex: 1; height: 100px; border-radius: 12px; border: 3px dashed #C2410C; background: #FFF7F0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 15px; font-weight: 900; color: #9A3412; animation: pop .5s 44s both;"><span style="font-size: 26px;">+</span>Another environment</div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #C2410C;">Route &middot; 3 of 3</div>
+<div class="tt" style="font-size: 26px;">Always send these to the CXM</div>
+<div class="bl" style="animation: fromR .6s 42.4s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">1</span><span class="bt" style="font-size: 18px;">A request to add sections of the site to scope.</span></div>
+<div class="bl" style="animation: fromR .6s 44s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">2</span><span class="bt" style="font-size: 18px;">A request to add another environment to scope.</span></div>
+<div class="call" style="background: #C2410C; animation: pop .5s 47s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Always</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Always a Project: we may be able to increase MRR.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 4 · PM CONFIRM ============ -->
+<template id="scene-4">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 4: What the PM does next</div><div class="h2s">Confirm the details, then estimate.</div></div>
+<div class="sc" style="left: 40px; width: 592px; background: #E3E9F2; color: #0B2545; animation: up .6s 1.4s both, litRing 24s 4s both;"><div class="sr"><span class="sn" style="background: #0B2545;">1</span><span class="tg" style="background: #0B2545;">PM</span></div><div class="st">Confirm with the customer</div><svg class="mk" width="28" height="28" style="animation: pop .5s 27.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 648px; width: 592px; background: #E5F4DE; color: #2F7A22; animation: up .6s 1.6s both, litRing 24s 28s both;"><div class="sr"><span class="sn" style="background: #2F7A22;">2</span><span class="tg" style="background: #2F7A22;">PM</span></div><div class="st">Estimate the work</div><svg class="mk" width="28" height="28" style="animation: pop .5s 51.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">After you hand it off&hellip;</div>
+<div class="win" style="animation: win 24s 4s both;">
+<div class="shot" style="background: #E3E9F2; display: block;"><div class="wc" style="left: 70px; top: 22px; width: 560px; height: 366px; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; animation: zoomIn .6s 4.5s both;"><span class="lab">PDR case fields</span><div style="display: flex; align-items: center; gap: 10px; height: 44px; border-radius: 10px; background: #F3F6FB; padding: 0 12px; font-size: 15px; font-weight: 700; color: #0B2545; animation: fromR .5s 5.5s both;"><svg width="22" height="22" style="flex-shrink: 0; animation: pop .4s 6.5s both;"><use href="#dc-check"></use></svg>What&rsquo;s changing (App A play if scope changes)</div><div style="display: flex; align-items: center; gap: 10px; height: 44px; border-radius: 10px; background: #F3F6FB; padding: 0 12px; font-size: 15px; font-weight: 700; color: #0B2545; animation: fromR .5s 7.5s both;"><svg width="22" height="22" style="flex-shrink: 0; animation: pop .4s 8.5s both;"><use href="#dc-check"></use></svg>How it&rsquo;s tested in English, with test data</div><div style="display: flex; align-items: center; gap: 10px; height: 44px; border-radius: 10px; background: #F3F6FB; padding: 0 12px; font-size: 15px; font-weight: 700; color: #0B2545; animation: fromR .5s 9.5s both;"><svg width="22" height="22" style="flex-shrink: 0; animation: pop .4s 10.5s both;"><use href="#dc-check"></use></svg>When and how to access the new functionality</div><div style="display: flex; align-items: center; gap: 10px; height: 44px; border-radius: 10px; background: #F3F6FB; padding: 0 12px; font-size: 15px; font-weight: 700; color: #0B2545; animation: fromR .5s 11.5s both;"><svg width="22" height="22" style="flex-shrink: 0; animation: pop .4s 12.5s both;"><use href="#dc-check"></use></svg>When the new functionality will be complete</div><div style="display: flex; align-items: center; gap: 10px; height: 44px; border-radius: 10px; background: #F3F6FB; padding: 0 12px; font-size: 15px; font-weight: 700; color: #0B2545; animation: fromR .5s 13.5s both;"><svg width="22" height="22" style="flex-shrink: 0; animation: pop .4s 14.5s both;"><use href="#dc-check"></use></svg>When it goes live</div><div style="display: flex; align-items: center; gap: 10px; height: 44px; border-radius: 10px; background: #F3F6FB; padding: 0 12px; font-size: 15px; font-weight: 700; color: #0B2545; animation: fromR .5s 15.5s both;"><svg width="22" height="22" style="flex-shrink: 0; animation: pop .4s 16.5s both;"><use href="#dc-check"></use></svg>Estimated word count / professional hours</div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #0B2545;">The PM &middot; confirm</div>
+<div class="tt" style="font-size: 26px;">Confirm the details with the customer</div>
+<div class="bl" style="animation: fromR .6s 6s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">1</span><span class="bt" style="font-size: 18px;">Fill all the relevant PDR case fields.</span></div>
+<div class="bl" style="animation: fromR .6s 10s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">2</span><span class="bt" style="font-size: 18px;">Scope of work changing? Run the App A play.</span></div>
+<div class="call" style="background: #2F7A22; animation: pop .5s 18s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Your part is done</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">From here on, the PM handles it. You&rsquo;re no longer involved.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 24s 28s both;">
+<div class="shot" style="background: #E5F4DE; display: block;"><div class="wc" style="left: 40px; top: 24px; width: 620px; height: 190px; padding: 18px 22px; display: flex; flex-direction: column; gap: 8px; animation: zoomIn .6s 28.5s both;"><span class="lab">What the customer hears</span><span style="font-size: 17px; font-weight: 700; color: #0B2545; line-height: 1.45; font-style: italic; animation: fadeIn .8s 29.5s both;">&ldquo;As always, we&rsquo;ll charge you to translate whatever new content you publish. In addition, we&rsquo;ll test all the changes and bill actual time required to ensure the site is working perfectly.&rdquo;</span></div><span class="ch" style="position: absolute; left: 40px; top: 250px; height: 54px; font-size: 16px; color: #0B2545; border: 2px solid #1466F0; animation: pop .5s 34s both;">QA estimate</span><span class="ch" style="position: absolute; left: 232px; top: 250px; height: 54px; font-size: 16px; color: #0B2545; border: 2px solid #1466F0; animation: pop .5s 35s both;">PE estimate</span><span class="ch" style="position: absolute; left: 424px; top: 250px; height: 54px; font-size: 16px; color: #0B2545; border: 2px solid #2F7A22; animation: pop .5s 36.5s both;">+ 10% PM time</span><div style="position: absolute; left: 40px; top: 326px; width: 620px; height: 56px; border-radius: 14px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; padding: 0 20px; font-size: 17px; font-weight: 900; animation: up .5s 39s both;">Soft estimate, then bill actual costs.</div></div>
+<div class="tc2">
+<div class="eb" style="color: #2F7A22;">The PM &middot; estimate</div>
+<div class="tt" style="font-size: 26px;">Soft estimate, bill actual costs</div>
+<div class="bl" style="animation: fromR .6s 34s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">1</span><span class="bt" style="font-size: 18px;">The PM asks QA and PE for a work estimate.</span></div>
+<div class="bl" style="animation: fromR .6s 36.5s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">2</span><span class="bt" style="font-size: 18px;">Adds 10% to the total for PM time.</span></div>
+<div class="bl" style="animation: fromR .6s 40s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">3</span><span class="bt" style="font-size: 18px;">Fixed fee? The estimate is padded for risk.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 44s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Billable</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">PDR work is billable: everyone involved logs time with billable notes.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 5 · PM RUNS IT ============ -->
+<template id="scene-5">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 5: The PM runs it to delivery</div><div class="h2s">Run, monitor, deliver.</div></div>
+<div class="sc" style="left: 40px; width: 288px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.4s both, litRing 15s 4s both;"><div class="sr"><span class="sn" style="background: #1466F0;">1</span><span class="tg" style="background: #1466F0;">PM</span></div><div class="st">Notify the customer</div><svg class="mk" width="28" height="28" style="animation: pop .5s 18.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 344px; width: 288px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.6s both, litRing 15s 19s both;"><div class="sr"><span class="sn" style="background: #1466F0;">2</span><span class="tg" style="background: #1466F0;">PM</span></div><div class="st">Team and timeline</div><svg class="mk" width="28" height="28" style="animation: pop .5s 33.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 648px; width: 288px; background: #DDF3F1; color: #0F7C7A; animation: up .6s 1.8s both, litRing 15s 34s both;"><div class="sr"><span class="sn" style="background: #0F7C7A;">3</span><span class="tg" style="background: #0F7C7A;">QA &middot; PE</span></div><div class="st">The ticket loop</div><svg class="mk" width="28" height="28" style="animation: pop .5s 48.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 952px; width: 288px; background: #E5F4DE; color: #2F7A22; animation: up .6s 2s both, litRing 15s 49s both;"><div class="sr"><span class="sn" style="background: #2F7A22;">4</span><span class="tg" style="background: #2F7A22;">PM</span></div><div class="st">Monitor and deliver</div><svg class="mk" width="28" height="28" style="animation: pop .5s 63.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">The PM&rsquo;s project plan.</div>
+<div class="win" style="animation: win 15s 4s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div class="wc" style="left: 40px; top: 30px; width: 620px; height: 346px; animation: zoomIn .6s 4.4s both;"><div style="display: flex; border-bottom: 1px solid #E3E9F2;"><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #1466F0; border-bottom: 3px solid #1466F0;">Email</span><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #5A6B84;">Post</span><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #5A6B84;">Track &amp; Reassign</span></div><div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 6px;"><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 5s both;">Hi [Customer Name],</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 6.1s both;">My name is [PM Name], and I&rsquo;ll be managing case [Case #] now that it has been converted into a <b>PDR / Mini Project</b>.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 7.2s both;">I&rsquo;ll review the scope and keep you updated on our progress, including the expected timeline and delivery date.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 8.3s both;">If you have any questions in the meantime, feel free to reach out.</div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Run &middot; 1 of 4</div>
+<div class="tt" style="font-size: 26px;">The PM tells the customer</div>
+<div class="bl" style="animation: fromR .6s 6s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">The case has been converted into a PDR.</span></div>
+<div class="bl" style="animation: fromR .6s 9s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">2</span><span class="bt" style="font-size: 18px;">The PM is now the main contact.</span></div>
+<div class="bl" style="animation: fromR .6s 12s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">3</span><span class="bt" style="font-size: 18px;">Sets expectations on cost and delivery.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 15s 19s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div class="wc" style="left: 40px; top: 24px; width: 620px; height: 120px; padding: 18px 22px; display: flex; flex-direction: column; gap: 12px; animation: zoomIn .6s 19.5s both;"><span class="lab">Timeline</span><div style="position: relative; height: 40px; border-radius: 20px; background: #E3E9F2; overflow: hidden;"><div style="position: absolute; inset: 0; background: #1466F0; transform-origin: left; animation: grow 2.5s 20.2s both;"></div><span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 16px; font-weight: 900;">2&ndash;3 weeks, adjusted to the scope</span></div></div><div class="wc" style="left: 40px; top: 164px; width: 620px; height: 214px; padding: 18px 22px; display: flex; flex-direction: column; gap: 10px; animation: zoomIn .6s 22s both;"><span class="lab">Teams group</span><div style="display: flex; gap: 10px;"><span class="ch" style="height: 46px; border: 2px solid #1466F0; color: #0B2545; font-size: 15px; animation: pop .5s 23s both;">Translation (TAM)</span><span class="ch" style="height: 46px; border: 2px solid #1466F0; color: #0B2545; font-size: 15px; animation: pop .5s 23.8s both;">QA</span><span class="ch" style="height: 46px; border: 2px solid #1466F0; color: #0B2545; font-size: 15px; animation: pop .5s 24.6s both;">PE</span></div><div class="row" style="height: 48px; font-size: 15px; background: #F3F6FB; box-shadow: none; animation: up .5s 26s both;"><svg width="22" height="22" style="color: #1466F0;"><use href="#dc-phone"></use></svg>Internal handoff call, if needed</div><div class="row" style="height: 48px; font-size: 15px; background: #F3F6FB; box-shadow: none; animation: up .5s 27.5s both;"><svg width="22" height="22" style="color: #1466F0;"><use href="#dc-cal"></use></svg>A deadline for each task</div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Run &middot; 2 of 4</div>
+<div class="tt" style="font-size: 26px;">Team and timeline</div>
+<div class="bl" style="animation: fromR .6s 20.5s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">About 2&ndash;3 weeks for delivery.</span></div>
+<div class="bl" style="animation: fromR .6s 23s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">2</span><span class="bt" style="font-size: 18px;">A Teams group with Translation, QA and PE.</span></div>
+<div class="bl" style="animation: fromR .6s 26.5s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">3</span><span class="bt" style="font-size: 18px;">A handoff call and a deadline for each task.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 15s 34s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div style="position: absolute; left: 250px; top: 14px; width: 200px; height: 96px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 35s both; align-items: center; text-align: center;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">QA site analysis</span></div><div style="position: absolute; left: 470px; top: 150px; width: 200px; height: 96px; border-radius: 16px; background: #E3E9F2; border: 3px solid #0B2545; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 36.6s both; align-items: center; text-align: center;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Prioritized tickets</span></div><div style="position: absolute; left: 250px; top: 286px; width: 200px; height: 96px; border-radius: 16px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 38.2s both; align-items: center; text-align: center;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">PE / Translation fix</span></div><div style="position: absolute; left: 30px; top: 150px; width: 200px; height: 96px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 39.8s both; align-items: center; text-align: center;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Back to QA</span></div><svg width="700" height="408" style="position: absolute; left: 0; top: 0; pointer-events: none; animation: fadeIn .5s 36s both;"><g stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="8 8" style="animation: march 1.6s linear infinite;"><path d="M455 62 Q570 70 570 145"></path><path d="M570 250 Q570 330 455 334"></path><path d="M245 334 Q130 330 130 250"></path><path d="M130 145 Q130 70 245 62"></path></g></svg><div style="position: absolute; left: 258px; top: 172px; width: 184px; height: 60px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 42s both; align-items: center; padding: 6px 10px;"><span style="font-size: 14px; font-weight: 900; color: #9A3412; text-align: center;">QA updates TCrawl test cases</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #0F7C7A;">Run &middot; 3 of 4</div>
+<div class="tt" style="font-size: 26px;">The ticket loop</div>
+<div class="bl" style="animation: fromR .6s 35.5s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">1</span><span class="bt" style="font-size: 18px;">QA runs a site analysis and creates prioritized tickets.</span></div>
+<div class="bl" style="animation: fromR .6s 38.5s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">2</span><span class="bt" style="font-size: 18px;">PE and Translation complete them and return them to QA.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 43s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Rule</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Internal work goes in tasks and tickets, never in the case.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 15s 49s both;">
+<div class="shot" style="background: #E5F4DE; display: block;"><div class="wc" style="left: 40px; top: 24px; width: 620px; height: 110px; padding: 16px 22px; display: flex; align-items: center; gap: 16px; animation: zoomIn .6s 49.5s both;"><span style="width: 56px; height: 56px; border-radius: 14px; background: #DCE7F7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="30" height="30" style="color: #1466F0;"><use href="#dc-doc"></use></svg></span><div style="display: flex; flex-direction: column; gap: 4px;"><span class="lab">PDR report in Salesforce</span><span style="font-size: 17px; font-weight: 900; color: #0B2545;">Status and delivery date, kept up to date</span></div></div><div style="position: absolute; left: 40px; top: 156px; width: 620px; display: flex; flex-direction: column; gap: 10px;"><div class="row" style="height: 46px; font-size: 16px; animation: up .5s 54s both;"><svg width="24" height="24" style="flex-shrink: 0;"><use href="#dc-check"></use></svg>All tasks complete</div><div class="row" style="height: 46px; font-size: 16px; animation: up .5s 55.2s both;"><svg width="24" height="24" style="flex-shrink: 0;"><use href="#dc-check"></use></svg>All tickets closed</div><div class="row" style="height: 46px; font-size: 16px; animation: up .5s 56.4s both;"><svg width="24" height="24" style="flex-shrink: 0;"><use href="#dc-check"></use></svg>The customer confirms the project is complete</div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #2F7A22;">Monitor &amp; deliver &middot; 4 of 4</div>
+<div class="tt" style="font-size: 26px;">Keep everyone updated, then deliver</div>
+<div class="bl" style="animation: fromR .6s 50.5s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">1</span><span class="bt" style="font-size: 18px;">The PM updates the PDR report.</span></div>
+<div class="bl" style="animation: fromR .6s 52.5s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">2</span><span class="bt" style="font-size: 18px;">The PM updates the customer and team as things change.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 58s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Customer contact</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">The PM is the customer&rsquo;s main contact, unless it&rsquo;s urgent or after hours.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 6 · PRACTICE ============ -->
+<template id="scene-6">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 6: Practice. PDR or not?</div><div class="h2s">Think of your answer before it appears.</div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 4s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 1</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">The customer is launching a new checkout flow on their live site and asks for a separate invoice for the work.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 9s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Likely a PDR: functional change + separate invoice. Document the reasons, then Teams the CXM to confirm.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 14s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 2</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">The customer wants a new section of their site added to translation.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #FCE3CC; border: 3px solid #C2410C; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 19s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Always send it to the CXM. It&rsquo;s a Project: we may be able to increase MRR.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 24s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 3</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">A customer reports a typo on one translated page.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #DCE7F7; border: 3px solid #1466F0; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 29s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Not a PDR: a simple, single request. Work the case as usual.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 34s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 4</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">The customer sends a 10-page document listing issues across several flows in ES, FR and DE: translation, functionality and misalignments.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 39s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Likely a PDR. Document the reasons in the case, then Teams the CXM to confirm.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 44s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 5</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">A functional change on the live site needs a regression test, and the account&rsquo;s PM has left MotionPoint.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 49s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Flag it, and assign the case to the PM team lead to assign a PM.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 54s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 6</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">The change is big enough that the monthly subscription may need adjusting.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 59s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Send it to the CXM. They check the effort and the last MRR adjustment.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 64s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 7</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">The case is now a PDR, and the customer replies to you with a question.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #E3E9F2; border: 3px solid #0B2545; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 69s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">The PM is the main contact. Only step in if it&rsquo;s urgent or after hours.</span></div></div>
+</div>
+</template>
+
+<!-- ============ SCENE 7 · RECAP ============ -->
+<template id="scene-7">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Recap: when a case becomes a PDR</div><div class="h2s">Spot it, flag it, route it, step out.</div></div>
+<div style="position: absolute; left: 40px; top: 66px; width: 680px; height: 566px; border-radius: 20px; background: #DCE7F7; padding: 18px; display: flex; flex-direction: column; gap: 10px; animation: pop .55s 1s both;"><span class="disp" style="font-size: 22px; font-weight: 700; color: #0B2545; margin-bottom: 4px;">Your part</span><div class="row" style="height: 70px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 2.5s both;"><span class="sn" style="background: #1466F0;">1</span><span><b>Spot it:</b> a functional change on a live (or soon-live) site</span></div><div class="row" style="height: 70px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 4.7s both;"><span class="sn" style="background: #1466F0;">2</span><span><b>Plus one:</b> separate invoice, QA, big translation volume, subscription-size change, or complex work</span></div><div class="row" style="height: 70px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 6.9s both;"><span class="sn" style="background: #1466F0;">3</span><span><b>Flag it:</b> document the reasons in the case, then Teams the CXM</span></div><div class="row" style="height: 70px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 9.1s both;"><span class="sn" style="background: #1466F0;">4</span><span><b>Route it:</b> subscription-size change, new section or environment &rarr; CXM</span></div><div class="row" style="height: 70px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 11.3s both;"><span class="sn" style="background: #1466F0;">5</span><span><b>No PM?</b> Assign the case to the PM team lead</span></div><div class="row" style="height: 70px; font-size: 16px; font-weight: 700; line-height: 1.35; animation: up .5s 13.5s both;"><span class="sn" style="background: #1466F0;">6</span><span><b>Step out:</b> the PM owns the PDR</span></div></div>
+<div style="position: absolute; left: 744px; top: 66px; width: 496px; height: 196px; border-radius: 20px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 18px 22px; display: flex; flex-direction: column; gap: 8px; animation: pop .55s 17s both;"><div style="display: flex; align-items: center; gap: 10px;"><svg width="30" height="30"><use href="#dc-check"></use></svg><span class="disp" style="font-size: 21px; font-weight: 700; color: #0B2545;">The PM handles the rest</span></div><span style="font-size: 17px; font-weight: 700; color: #1F5A16; line-height: 1.45;">Confirms the details, estimates, runs the team and tickets, keeps everyone updated, and delivers.</span></div>
+<div style="position: absolute; left: 744px; top: 282px; width: 496px; height: 164px; border-radius: 20px; background: #FCE3CC; border: 3px solid #C2410C; padding: 18px 22px; display: flex; flex-direction: column; gap: 8px; animation: pop .55s 23s both;"><div style="display: flex; align-items: center; gap: 10px;"><svg width="30" height="30"><use href="#dc-warn"></use></svg><span class="disp" style="font-size: 21px; font-weight: 700; color: #0B2545;">Remember</span></div><span style="font-size: 17px; font-weight: 700; color: #9A3412; line-height: 1.45;">Anyone can flag a PDR. Only a PM or CXM can approve it.</span></div>
+<div style="position: absolute; left: 744px; top: 466px; width: 496px; height: 166px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 16px; padding: 0 26px; animation: pop .6s 31s both;"><svg width="44" height="44" style="color: #8FD16F; flex-shrink: 0;"><use href="#dc-clock"></use></svg><div style="display: flex; flex-direction: column; gap: 6px;"><span class="disp" style="font-size: 24px; font-weight: 700;">Thanks for watching!</span><span style="font-size: 15px; color: #C9D6E8;">Spot it, flag it, route it, step out.</span></div></div>
+</div>
+</template>
+
+<div id="sceneHost" style="position: absolute; inset: 0;"></div>
+
+<!-- ============ COVER ============ -->
+<div id="cover">
+<div style="position: absolute; inset: 0; background: #0B2545; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; text-align: center; color: #FFFFFF;">
+<div style="font-size: 16px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #8FD16F;">MotionPoint Support &middot; New Agent Training</div>
+<h1 class="disp" style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 700;">When a Case Becomes a PDR</h1>
+<p style="margin: 0; font-size: 22px; color: #C9D6E8; max-width: 800px;">Learn when a case should become a PDR, how to flag and route it, and what the PM does next. About 7 minutes, with background music.</p>
+<button type="button" id="coverPlay" style="margin-top: 14px; height: 72px; padding: 0 40px; border-radius: 36px; border: none; background: #1466F0; color: #FFFFFF; font-family: 'Lexend', sans-serif; font-size: 26px; font-weight: 600; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 16px 40px rgba(20,102,240,.45);">
+<svg width="26" height="26" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="#FFFFFF"></path></svg>Play</button>
+</div>
+</div>
+
+</div>
+
+<!-- ===================== SUBTITLES ===================== -->
+<div style="height: 70px; flex-shrink: 0; background: #0B1626; display: flex; align-items: center; justify-content: center; padding: 0 48px; position: relative; overflow: hidden;">
+<div id="subs" style="display: contents;"></div>
+</div>
+
+<!-- ===================== CONTROLS ===================== -->
+<div style="height: 80px; flex-shrink: 0; background: #0E1B2E; display: flex; flex-direction: column;">
+<div style="height: 6px; background: #1D2E48;"><div id="prog" style="height: 6px; width: 0%; background: #5DB645;"></div></div>
+<div style="flex-grow: 1; display: flex; align-items: center; gap: 10px; padding: 0 20px;">
+<button type="button" class="ctl main" id="playBtn" aria-label="Play">
+<span id="icoPause" style="display: contents;" hidden><svg width="18" height="18" viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1" fill="#FFFFFF"></rect><rect x="14" y="4.5" width="4" height="15" rx="1" fill="#FFFFFF"></rect></svg></span>
+<span id="icoPlay" style="display: contents;"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="#FFFFFF"></path></svg></span>
+<span id="playLabel">Play</span>
+</button>
+<button type="button" class="ctl" id="replayBtn" aria-label="Replay from start">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
+</button>
+<button type="button" class="ctl" id="back10Btn" aria-label="Back 10 seconds" title="Back 10 seconds (Left arrow)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5 5-5"></path><path d="M18 17l-5-5 5-5"></path></svg>
+<span>10s</span>
+</button>
+<button type="button" class="ctl" id="fwd10Btn" aria-label="Forward 10 seconds" title="Forward 10 seconds (Right arrow)">
+<span>10s</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17l5-5-5-5"></path><path d="M6 17l5-5-5-5"></path></svg>
+</button>
+<button type="button" class="ctl" id="musicBtn" aria-label="Music on" aria-pressed="true">
+<span id="icoMusicOn" style="display: contents;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8FD16F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></span>
+<span id="icoMusicOff" style="display: contents;" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A9B8CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle><path d="M3 3l18 18"></path></svg></span>
+<span id="musicLabel" style="display:none">Music on</span>
+</button>
+<button type="button" class="ctl" id="subsBtn" aria-label="Hide captions" aria-pressed="true">
+<svg width="22" height="18" viewBox="0 0 26 20" fill="none" id="subsIcon" stroke="#8FD16F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="1.5" width="23" height="17" rx="3"></rect><path d="M11 8.2a3 3 0 1 0 0 3.6"></path><path d="M19 8.2a3 3 0 1 0 0 3.6"></path></svg>
+</button>
+<button type="button" class="ctl" id="prevBtn" aria-label="Previous scene">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+</button>
+<button type="button" class="ctl" id="nextBtn" aria-label="Next scene">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</button>
+<div style="width: 1px; height: 30px; background: #2A3E5C; margin: 0 4px;"></div>
+<div style="display: flex; gap: 4px; flex-grow: 1; overflow: hidden;">
+<span id="chapters" style="display: contents;"></span>
+</div>
+<div style="font-size: 14px; font-weight: 700; color: #A9B8CC; white-space: nowrap; font-variant-numeric: tabular-nums;" id="timeLabel">0:00</div>
+</div>
+</div>
+
+
+</div>
+</div>
+<script>
+const STEP_HTML = "<div style=\"height: 52px; padding: 0 18px 0 6px; border-radius: 26px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 10px; box-shadow: 0 6px 16px rgba(11,37,69,.22); animation: pop 0.78s ease both;\">\n<span class=\"disp\" style=\"width: 40px; height: 40px; border-radius: 20px; background: #5DB645; color: #0B2545; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700;\">{{st.n}}</span>\n<span style=\"font-size: 15px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase;\">Part {{st.n}} of 7</span>\n</div>";
+const SUB_OPEN = "<div style=\"position: absolute; left: 48px; right: 48px; top: 0; height: 70px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 22px; line-height: 1.3; font-weight: 700; color: #F4F7FB; animation: up 0.7s ease both;\">";
+function fit(){ const s = Math.min(window.innerWidth / 1280, window.innerHeight / 870); document.getElementById('fit').style.transform = 'scale(' + s + ')'; }
+window.addEventListener('resize', fit); fit();
+class Player {
+  constructor() {
+    this.state = { scene: 0, el: 0, playing: false, started: false, ended: false, music: true, subsOn: true };
+    this.ctx = null;
+  }
+  durs() { return [24000, 80000, 66000, 59000, 54000, 66000, 76000, 40000]; }
+  subLines() {
+    return [[[0, "Welcome! This video shows when a support case should become a PDR, a post delivery request."], [6000, "A PDR is a mini project, managed directly by a PM."], [10000, "Your part: spot it, document the reasons, confirm with the CXM, and route it. Then the PM takes over."], [16000, "Once a case is a PDR, the PM handles it directly, and you're no longer involved."]],
+      [[0, "Part 1: spot it, with a two-part test."], [2500, "First, this must be true: a functional change is being made to a site that's live, or soon to be live."], [9000, "If that's not true, it's not a PDR."], [12000, "And, at least one of these must also be true."], [15000, "The customer requests a separate invoice for the work."], [20000, "The change needs QA, like a site analysis, a regression test, light QA, or a TCrawl run."], [25000, "The translation volume is significant."], [30000, "The change is big enough to consider adjusting the monthly subscription."], [35000, "Or the work is complex: multiple flows, steps or languages, or long reports with attachments and documents from the customer."], [41000, "MotionPoint QA can run regression tests, then validate the TAM and PE fixes, so the PM can give the customer progressive updates."], [48000, "Part one, plus at least one from the list? It may be a PDR."], [55000, "Keep in mind: a PDR is heavy work, not a quick fix."], [57500, "Fix this URL, translate this page, fix a misalignment: those are simple, single requests. Work them as regular cases."], [65000, "A PDR can hold many requests in one case: translation, functionality, activations, misalignments and customizations."], [70500, "Often across multiple languages."], [74000, "Plus multiple flows and steps, long reports with attachments, and QA regression testing."]],
+      [[0, "Part 2: flag it."], [4000, "Anyone on the team can flag a case as a PDR. But only a PM or a CXM can approve it."], [12000, "So flagging isn't approving. Wait for the PM or CXM to decide."], [24000, "First, document the legit reasons in the case: add an internal post and tag the CXM."], [30000, "Say what's changing, list each request, and explain why it's a PDR."], [44000, "Then reach out to the CXM on Teams first, to get their confirmation."], [50000, "Explain the reasons in a short message, like this one, and ask the CXM to confirm."], [56000, "Until the CXM confirms, it's still a regular case."]],
+      [[0, "Part 3: route it to the right person."], [4000, "If the change could be big enough to adjust the monthly subscription, send it to the CXM."], [9000, "The CXM evaluates the level of effort, and the last time the customer's MRR was adjusted. If it's a PDR, the PM manages it."], [22000, "If the account has no dedicated PM, or the PM is no longer with MotionPoint, assign the case to the PM team lead."], [29000, "They'll assign a PM to the PDR."], [40000, "And always send these to the CXM: a request to add sections of the site, or another environment, to scope."], [48000, "Those are always a Project, because we may be able to increase MRR."]],
+      [[0, "Part 4: what the PM does next. You won't do these steps, but it helps to know them."], [4000, "The PM confirms the details with the customer and fills the PDR case fields."], [9000, "What's changing, how it's tested in English, when and how to access it, when it's complete, when it goes live, and the estimated words and hours."], [18000, "From here on, the PM handles it. Your part is done."], [28000, "Next, the estimate. We prefer a soft estimate, and billing actual costs."], [34000, "The PM asks QA and PE for a work estimate, and adds ten percent for PM time."], [40000, "If the customer insists on a fixed fee, the estimate is padded to cover the risk."], [44000, "PDR work is billable, so everyone involved logs their time with billable notes."]],
+      [[0, "Part 5: the PM runs the project to delivery."], [4000, "First, the PM emails the customer: the case has been converted into a PDR, and the PM is now managing it."], [12000, "The PM sets expectations on cost and delivery."], [19000, "Delivery usually takes two to three weeks, adjusted to the scope."], [23000, "The PM sets up a Teams group with Translation, QA and PE, a handoff call if needed, and a deadline for each task."], [34000, "QA runs a site analysis and creates prioritized tickets for PE and Translation."], [39000, "They complete the tickets and return them to QA, and QA updates the TCrawl test cases."], [43000, "Internal work goes in tasks and tickets, never in the case. The case is only for the customer."], [49000, "The PM keeps the PDR report and everyone updated."], [54000, "It's delivered when all tasks are complete, all tickets are closed, and the customer confirms."], [58000, "The PM is the customer's main contact, unless it's urgent or after hours."]],
+      [[0, "Part 6: practice. PDR or not?"], [4000, "A new checkout flow on the live site, and the customer asks for a separate invoice."], [9000, "Likely a PDR. Document the reasons, then Teams the CXM to confirm."], [14000, "The customer wants a new section of the site added to translation."], [19000, "Always send it to the CXM. It's a Project."], [24000, "A typo on one translated page."], [29000, "Not a PDR. It's a simple, single request, so work the case as usual."], [34000, "A ten-page document listing issues across several flows and three languages."], [39000, "Likely a PDR. Document the reasons, then Teams the CXM to confirm."], [44000, "A functional change needs a regression test, and the account's PM has left."], [49000, "Flag it, and assign the case to the PM team lead."], [54000, "The change may be big enough to adjust the monthly subscription."], [59000, "Send it to the CXM."], [64000, "The case is a PDR, and the customer replies to you."], [69000, "The PM is the main contact. Only step in if it's urgent or after hours."]],
+      [[0, "Recap."], [2500, "Spot it: a functional change on a live, or soon to be live, site."], [5000, "Plus one more sign: a separate invoice, QA, a big translation volume, a change to the subscription, or complex work."], [9000, "Document the reasons in the case, then reach out to the CXM on Teams to confirm, and route it to the right person."], [14000, "No PM? Assign the case to the PM team lead. Then step out."], [17000, "The PM handles the rest, all the way to delivery."], [23000, "Remember: anyone can flag a PDR, but only a PM or CXM can approve it."], [31000, "Thanks for watching!"]]];
+  }
+  labels() { return ["Intro", "Spot it", "Flag it", "Route it", "PM: confirm", "PM: run", "Practice", "Recap"]; }
+
+  /* ---------- original background jazz, synthesized live ---------- */
+  bars() {
+    // [bass walk (MIDI), chord voicing (MIDI)] — ii-V-I in F with turnarounds, 80 bpm swing
+    return [
+      [[43, 46, 50, 47], [58, 62, 65, 69]], // Gm9
+      [[48, 46, 43, 40], [58, 62, 64, 69]], // C13
+      [[41, 45, 48, 49], [57, 60, 64, 67]], // Fmaj9
+      [[50, 48, 45, 44], [54, 60, 64, 69]], // D9
+      [[43, 46, 50, 47], [58, 62, 65, 69]], // Gm9
+      [[48, 46, 43, 40], [58, 62, 64, 69]], // C13
+      [[45, 48, 52, 51], [60, 64, 67, 71]], // Am9
+      [[50, 48, 45, 44], [54, 60, 64, 69]]  // D9
+    ];
+  }
+  hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  initAudio() {
+    if (this.ctx) return true;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      const ctx = new AC();
+      const master = ctx.createGain();
+      master.gain.value = 0;
+      master.connect(ctx.destination);
+      const len = Math.floor(ctx.sampleRate * 1.0);
+      const noise = ctx.createBuffer(1, len, ctx.sampleRate);
+      const data = noise.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      this.ctx = ctx; this.master = master; this.noise = noise;
+      this.beat = 0; this.nextT = 0;
+      return true;
+    } catch (e) { return false; }
+  }
+  pianoNote(m, t, vel, dur) {
+    const c = this.ctx;
+    const f = this.hz(m);
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(2600, t); lp.frequency.exponentialRampToValueAtTime(900, t + dur);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vel, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(vel * 0.3, t + 0.4);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    lp.connect(g); g.connect(this.master);
+    [[1, 1], [2, 0.28], [3, 0.08]].forEach((h) => {
+      const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = f * h[0];
+      const hg = c.createGain(); hg.gain.value = h[1];
+      o.connect(hg); hg.connect(lp);
+      o.start(t); o.stop(t + dur + 0.05);
+    });
+  }
+  pianoChord(notes, t, vel, dur) {
+    notes.forEach((m, i) => this.pianoNote(m, t + i * 0.018, vel, dur));
+  }
+  tap(t, vol, dur, freq) {
+    const c = this.ctx;
+    const s = c.createBufferSource(); s.buffer = this.noise;
+    const f = c.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = freq;
+    const g = c.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(this.master);
+    s.start(t); s.stop(t + dur + 0.02);
+  }
+  scheduleBeat(i, t) {
+    const spb = 60 / 80;
+    const sw = spb * 2 / 3;
+    const barIx = Math.floor(i / 4) % 8;
+    const bar = this.bars()[barIx];
+    const b = i % 4;
+    this.tap(t, 0.014, 0.25, 7500);
+    if (b === 1 || b === 3) {
+      this.tap(t + sw, 0.01, 0.18, 7500);
+      this.tap(t, 0.012, 0.05, 9500);
+    }
+    if (b === 0) {
+      this.pianoNote(bar[0][0] + 12, t, 0.05, 2.4);
+      this.pianoChord(bar[1], t + 0.03, 0.028, 2.2);
+    }
+    const v = Math.floor(i / 4) % 2;
+    if (b === 2 && v === 0) this.pianoChord(bar[1], t + sw, 0.018, 1.2);
+    if (b === 1 && v === 1) this.pianoChord(bar[1], t + sw, 0.018, 1.2);
+  }
+  schedule() {
+    const c = this.ctx;
+    if (!c || c.state !== 'running' || !this.musicLive) return;
+    if (this.nextT < c.currentTime) this.nextT = c.currentTime + 0.05;
+    while (this.nextT < c.currentTime + 0.3) {
+      this.scheduleBeat(this.beat, this.nextT);
+      this.beat = (this.beat + 1) % 32;
+      this.nextT += 60 / 80;
+    }
+  }
+  musicStart() {
+    if (!this.state.music || !this.initAudio()) return;
+    const c = this.ctx;
+    try { c.resume(); } catch (e) {}
+    if (!this.musicLive) {
+      this.musicLive = true;
+      this.beat = 0;
+      this.nextT = c.currentTime + 0.1;
+      this.master.gain.cancelScheduledValues(c.currentTime);
+      this.master.gain.setValueAtTime(0.0001, c.currentTime);
+      this.master.gain.exponentialRampToValueAtTime(0.55, c.currentTime + 1.5);
+    }
+  }
+  musicStop(fade) {
+    if (!this.ctx) return;
+    const c = this.ctx;
+    this.musicLive = false;
+    const now = c.currentTime;
+    this.master.gain.cancelScheduledValues(now);
+    this.master.gain.setValueAtTime(Math.max(this.master.gain.value, 0.0001), now);
+    this.master.gain.exponentialRampToValueAtTime(0.0001, now + (fade || 0.3));
+  }
+  musicPause() { if (this.ctx) { try { this.ctx.suspend(); } catch (e) {} } }
+  musicResume() { if (this.ctx && this.state.music) { try { this.ctx.resume(); } catch (e) {} } }
+
+  componentDidMount() {
+    this.iv = setInterval(() => this.tick(), 200);
+    this.au = setInterval(() => this.schedule(), 60);
+  }
+  componentWillUnmount() {
+    clearInterval(this.iv); clearInterval(this.au); clearTimeout(this.to);
+    if (this.ctx) { try { this.ctx.close(); } catch (e) {} }
+  }
+  tick() {
+    const s = this.state;
+    if (!s.playing || s.scene < 0) return;
+    const d = this.durs();
+    const el = s.el + 200;
+    if (el >= d[s.scene]) {
+      if (s.scene < d.length - 1) this.setState({ scene: s.scene + 1, el: 0 });
+      else { this.setState({ el: d[s.scene], playing: false, ended: true }); this.musicStop(3); }
+    } else {
+      this.setState({ el: el });
+    }
+  }
+  go(i, off) {
+    off = off || 0;
+    clearTimeout(this.to);
+    this.musicStart();
+    this.musicResume();
+    this.setState({ scene: -1, el: 0 });
+    this.to = setTimeout(() => {
+      this.setState({ scene: i, el: off, started: true, playing: true, ended: false });
+      if (off) setTimeout(() => this.sync(off), 60);
+    }, 40);
+  }
+  sync(off) {
+    try {
+      const st = document.querySelector('.stage');
+      if (!st || !st.getAnimations) return;
+      st.getAnimations({ subtree: true }).forEach((a) => { try { a.currentTime = off; } catch (e) {} });
+    } catch (e) {}
+  }
+  jump(delta) {
+    const d = this.durs();
+    const s = this.state;
+    const cur = s.scene < 0 ? 0 : s.scene;
+    let t = 0;
+    for (let i = 0; i < cur; i++) t += d[i];
+    t += (s.scene < 0 || !s.started) ? 0 : s.el;
+    const total = d.reduce((a, b) => a + b, 0);
+    t = Math.max(0, Math.min(t + delta, total - 500));
+    let i = 0;
+    while (i < d.length - 1 && t >= d[i]) { t -= d[i]; i++; }
+    this.go(i, t);
+  }
+  fmt(ms) {
+    const t = Math.floor(ms / 1000);
+    const m = Math.floor(t / 60);
+    const sec = t % 60;
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+  renderVals() {
+    const s = this.state;
+    const d = this.durs();
+    const total = d.reduce((a, b) => a + b, 0);
+    const cur = s.scene < 0 ? 0 : s.scene;
+    let done = 0;
+    for (let i = 0; i < cur; i++) done += d[i];
+    done += s.scene < 0 ? 0 : s.el;
+    const vis = s.started ? s.scene : -2;
+    const chapters = this.labels().map((label, i) => ({
+      label: label,
+      cls: s.started && i === cur ? 'on' : (s.started && i < cur ? 'done' : ''),
+      go: () => this.go(i)
+    }));
+    return {
+      s0: vis === 0, s1: vis === 1, s2: vis === 2, s3: vis === 3, s4: vis === 4, s5: vis === 5, s6: vis === 6, s7: vis === 7,
+      showCover: !s.started,
+      pauseCls: s.playing ? '' : 'paused',
+      isPlaying: s.playing,
+      notPlaying: !s.playing,
+      playLabel: s.playing ? 'Pause' : (s.ended ? 'Replay' : 'Play'),
+      progressW: (Math.min(1, done / total) * 100).toFixed(2) + '%',
+      timeLabel: this.fmt(done) + ' / ' + this.fmt(total),
+      chapters: chapters,
+      steps: [1, 2, 3, 4, 5, 6, 7].map((n) => ({ n: n, on: s.started && s.scene >= 0 && s.scene === n })),
+      showSubs: s.subsOn && s.started,
+      subs: (() => {
+        const L = s.scene >= 0 ? this.subLines()[s.scene] : [];
+        let act = -1;
+        L.forEach((c, i) => { if (s.el >= c[0]) act = i; });
+        return L.map((c, i) => ({ text: c[1], on: i === act }));
+      })(),
+      subsOn: s.subsOn,
+      subsLabel: s.subsOn ? 'Hide captions' : 'Show captions',
+      subsColor: s.subsOn ? '#8FD16F' : '#A9B8CC',
+      toggleSubs: () => this.setState({ subsOn: !this.state.subsOn }),
+      musicOn: s.music,
+      musicOff: !s.music,
+      musicLabel: s.music ? 'Music on' : 'Music off',
+      toggleMusic: () => {
+        const on = !this.state.music;
+        this.setState({ music: on }, () => {
+          if (!on) this.musicStop(0.6);
+          else if (this.state.playing) this.musicStart();
+        });
+      },
+      togglePlay: () => {
+        if (!this.state.started || this.state.ended) this.go(0);
+        else {
+          const playing = !this.state.playing;
+          if (playing) this.musicResume(); else this.musicPause();
+          this.setState({ playing: playing });
+        }
+      },
+      replay: () => this.go(0),
+      back10: () => this.jump(-10000),
+      fwd10: () => this.jump(10000),
+      prev: () => this.go(Math.max(0, cur - 1)),
+      next: () => this.go(Math.min(d.length - 1, cur + 1))
+    };
+  }
+}
+
+Player.prototype.setState = function (obj, cb) { Object.assign(this.state, obj); this.render(); if (cb) cb(); };
+Player.prototype.render = function () {
+  const v = this.renderVals();
+  const $ = (id) => document.getElementById(id);
+  const s = this.state;
+  const vis = s.started ? s.scene : -2;
+  if (vis !== this._vis) {
+    this._vis = vis;
+    const tpl = $('scene-' + vis);
+    $('sceneHost').innerHTML = tpl ? tpl.innerHTML : '';
+  }
+  $('stage').classList.toggle('paused', !s.playing);
+  $('cover').hidden = !v.showCover;
+  const st = v.steps.find((x) => x.on);
+  const stn = st ? st.n : 0;
+  if (stn !== this._step) { this._step = stn; $('steps').innerHTML = stn ? STEP_HTML.split('{{st.n}}').join(String(stn)) : ''; }
+  const sb = v.showSubs ? v.subs.find((x) => x.on) : null;
+  const key = sb ? s.scene + '|' + sb.text : '';
+  if (key !== this._sub) {
+    this._sub = key;
+    $('subs').innerHTML = '';
+    if (sb) { const d = document.createElement('div'); d.innerHTML = SUB_OPEN + '</div>'; d.firstChild.textContent = sb.text; $('subs').appendChild(d.firstChild); }
+  }
+  $('prog').style.width = v.progressW;
+  $('timeLabel').textContent = v.timeLabel;
+  $('playLabel').textContent = v.playLabel;
+  $('playBtn').setAttribute('aria-label', v.playLabel);
+  $('icoPause').hidden = !v.isPlaying; $('icoPlay').hidden = v.isPlaying;
+  $('musicLabel').textContent = v.musicLabel; $('musicBtn').setAttribute('aria-label', v.musicLabel); $('musicBtn').setAttribute('aria-pressed', String(v.musicOn));
+  $('icoMusicOn').hidden = !v.musicOn; $('icoMusicOff').hidden = v.musicOn;
+  $('subsBtn').setAttribute('aria-label', v.subsLabel); $('subsBtn').setAttribute('aria-pressed', String(v.subsOn)); $('subsIcon').setAttribute('stroke', v.subsColor);
+  const ck = v.chapters.map((c) => c.cls).join(',');
+  if (ck !== this._chips) {
+    this._chips = ck;
+    const host = $('chapters'); host.innerHTML = '';
+    v.chapters.forEach((c, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip ' + c.cls; b.textContent = c.label;
+      b.addEventListener('click', () => this.go(i)); host.appendChild(b);
+    });
+  }
+};
+const P = new Player();
+const call = (k) => () => P.renderVals()[k]();
+document.getElementById('coverPlay').addEventListener('click', call('togglePlay'));
+document.getElementById('playBtn').addEventListener('click', call('togglePlay'));
+document.getElementById('replayBtn').addEventListener('click', call('replay'));
+document.getElementById('prevBtn').addEventListener('click', call('prev'));
+document.getElementById('back10Btn').addEventListener('click', call('back10'));
+document.getElementById('fwd10Btn').addEventListener('click', call('fwd10'));
+document.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); call('back10')(); } else if (e.key === 'ArrowRight') { e.preventDefault(); call('fwd10')(); } else if (e.key === ' ' && e.target === document.body) { e.preventDefault(); call('togglePlay')(); } });
+document.getElementById('nextBtn').addEventListener('click', call('next'));
+document.getElementById('musicBtn').addEventListener('click', call('toggleMusic'));
+document.getElementById('subsBtn').addEventListener('click', call('toggleSubs'));
+P.render();
+P.componentDidMount();
+
+</script>
+</body>
+</html>
